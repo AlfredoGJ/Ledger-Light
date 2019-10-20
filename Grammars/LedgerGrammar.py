@@ -75,8 +75,6 @@ FAILURE = object()
 
 
 class Grammar(object):
-    REGEX_1 = re.compile('^[a-zA-Z-0-9]')
-
     def _read_LedgerCall(self):
         address0, index0 = FAILURE, self._offset
         cached = self._cache['LedgerCall'].get(index0)
@@ -524,10 +522,7 @@ class Grammar(object):
             return cached[0]
         remaining0, index1, elements0, address1 = 0, self._offset, [], True
         while address1 is not FAILURE:
-            chunk0 = None
             if self._offset < self._input_size:
-                chunk0 = self._input[self._offset:self._offset + 1]
-            if chunk0 is not None and Grammar.REGEX_1.search(chunk0):
                 address1 = TreeNode(self._input[self._offset:self._offset + 1], self._offset)
                 self._offset = self._offset + 1
             else:
@@ -536,7 +531,7 @@ class Grammar(object):
                     self._failure = self._offset
                     self._expected = []
                 if self._offset == self._failure:
-                    self._expected.append('[a-zA-Z-0-9]')
+                    self._expected.append('<any char>')
             if address1 is not FAILURE:
                 elements0.append(address1)
                 remaining0 -= 1
