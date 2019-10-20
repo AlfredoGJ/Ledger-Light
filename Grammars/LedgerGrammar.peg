@@ -1,7 +1,10 @@
 
 Grammar Ledger
-LedgerCall <- "Ledger" Sep Options* / "Ledger" EOS #Command? Arguments? 
-Options <- File (Sep / EOS) / Sort (Sep / EOS) / PriceDb (Sep / EOS )
+LedgerCall <- "Ledger" Sep Options / "Ledger" EOS #Command? Arguments? 
+Options <-  (FileOpt / SortOpt / PriceOpt)+ 
+FileOpt <- File (Sep / EOS)
+SortOpt <- Sort (Sep / EOS) 
+PriceOpt <- PriceDb (Sep / EOS )
 File <- FileFlag Sep FilePath
 FileFlag <- "--file" / "-f"
 Sort <- SortFlag Sep SortCriteria

@@ -17,6 +17,7 @@ class TreeNode1(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode1, self).__init__(text, offset, elements)
         self.Sep = elements[1]
+        self.Options = elements[2]
 
 
 class TreeNode2(TreeNode):
@@ -104,17 +105,7 @@ class Grammar(object):
             if address2 is not FAILURE:
                 elements0.append(address2)
                 address3 = FAILURE
-                remaining0, index3, elements1, address4 = 0, self._offset, [], True
-                while address4 is not FAILURE:
-                    address4 = self._read_Options()
-                    if address4 is not FAILURE:
-                        elements1.append(address4)
-                        remaining0 -= 1
-                if remaining0 <= 0:
-                    address3 = TreeNode(self._input[index3:self._offset], index3, elements1)
-                    self._offset = self._offset
-                else:
-                    address3 = FAILURE
+                address3 = self._read_Options()
                 if address3 is not FAILURE:
                     elements0.append(address3)
                 else:
@@ -133,37 +124,37 @@ class Grammar(object):
             self._offset = self._offset
         if address0 is FAILURE:
             self._offset = index1
-            index4, elements2 = self._offset, []
-            address5 = FAILURE
+            index3, elements1 = self._offset, []
+            address4 = FAILURE
             chunk1 = None
             if self._offset < self._input_size:
                 chunk1 = self._input[self._offset:self._offset + 6]
             if chunk1 == 'Ledger':
-                address5 = TreeNode(self._input[self._offset:self._offset + 6], self._offset)
+                address4 = TreeNode(self._input[self._offset:self._offset + 6], self._offset)
                 self._offset = self._offset + 6
             else:
-                address5 = FAILURE
+                address4 = FAILURE
                 if self._offset > self._failure:
                     self._failure = self._offset
                     self._expected = []
                 if self._offset == self._failure:
                     self._expected.append('"Ledger"')
-            if address5 is not FAILURE:
-                elements2.append(address5)
-                address6 = FAILURE
-                address6 = self._read_EOS()
-                if address6 is not FAILURE:
-                    elements2.append(address6)
+            if address4 is not FAILURE:
+                elements1.append(address4)
+                address5 = FAILURE
+                address5 = self._read_EOS()
+                if address5 is not FAILURE:
+                    elements1.append(address5)
                 else:
-                    elements2 = None
-                    self._offset = index4
+                    elements1 = None
+                    self._offset = index3
             else:
-                elements2 = None
-                self._offset = index4
-            if elements2 is None:
+                elements1 = None
+                self._offset = index3
+            if elements1 is None:
                 address0 = FAILURE
             else:
-                address0 = TreeNode2(self._input[index4:self._offset], index4, elements2)
+                address0 = TreeNode2(self._input[index3:self._offset], index3, elements1)
                 self._offset = self._offset
             if address0 is FAILURE:
                 self._offset = index1
@@ -176,92 +167,132 @@ class Grammar(object):
         if cached:
             self._offset = cached[1]
             return cached[0]
-        index1 = self._offset
-        index2, elements0 = self._offset, []
+        remaining0, index1, elements0, address1 = 1, self._offset, [], True
+        while address1 is not FAILURE:
+            index2 = self._offset
+            address1 = self._read_FileOpt()
+            if address1 is FAILURE:
+                self._offset = index2
+                address1 = self._read_SortOpt()
+                if address1 is FAILURE:
+                    self._offset = index2
+                    address1 = self._read_PriceOpt()
+                    if address1 is FAILURE:
+                        self._offset = index2
+            if address1 is not FAILURE:
+                elements0.append(address1)
+                remaining0 -= 1
+        if remaining0 <= 0:
+            address0 = TreeNode(self._input[index1:self._offset], index1, elements0)
+            self._offset = self._offset
+        else:
+            address0 = FAILURE
+        self._cache['Options'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_FileOpt(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['FileOpt'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1, elements0 = self._offset, []
         address1 = FAILURE
         address1 = self._read_File()
         if address1 is not FAILURE:
             elements0.append(address1)
             address2 = FAILURE
-            index3 = self._offset
+            index2 = self._offset
             address2 = self._read_Sep()
             if address2 is FAILURE:
-                self._offset = index3
+                self._offset = index2
                 address2 = self._read_EOS()
                 if address2 is FAILURE:
-                    self._offset = index3
+                    self._offset = index2
             if address2 is not FAILURE:
                 elements0.append(address2)
             else:
                 elements0 = None
-                self._offset = index2
+                self._offset = index1
         else:
             elements0 = None
-            self._offset = index2
+            self._offset = index1
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode3(self._input[index2:self._offset], index2, elements0)
+            address0 = TreeNode3(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
-        if address0 is FAILURE:
-            self._offset = index1
-            index4, elements1 = self._offset, []
-            address3 = FAILURE
-            address3 = self._read_Sort()
-            if address3 is not FAILURE:
-                elements1.append(address3)
-                address4 = FAILURE
-                index5 = self._offset
-                address4 = self._read_Sep()
-                if address4 is FAILURE:
-                    self._offset = index5
-                    address4 = self._read_EOS()
-                    if address4 is FAILURE:
-                        self._offset = index5
-                if address4 is not FAILURE:
-                    elements1.append(address4)
-                else:
-                    elements1 = None
-                    self._offset = index4
+        self._cache['FileOpt'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_SortOpt(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['SortOpt'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1, elements0 = self._offset, []
+        address1 = FAILURE
+        address1 = self._read_Sort()
+        if address1 is not FAILURE:
+            elements0.append(address1)
+            address2 = FAILURE
+            index2 = self._offset
+            address2 = self._read_Sep()
+            if address2 is FAILURE:
+                self._offset = index2
+                address2 = self._read_EOS()
+                if address2 is FAILURE:
+                    self._offset = index2
+            if address2 is not FAILURE:
+                elements0.append(address2)
             else:
-                elements1 = None
-                self._offset = index4
-            if elements1 is None:
-                address0 = FAILURE
-            else:
-                address0 = TreeNode4(self._input[index4:self._offset], index4, elements1)
-                self._offset = self._offset
-            if address0 is FAILURE:
+                elements0 = None
                 self._offset = index1
-                index6, elements2 = self._offset, []
-                address5 = FAILURE
-                address5 = self._read_PriceDb()
-                if address5 is not FAILURE:
-                    elements2.append(address5)
-                    address6 = FAILURE
-                    index7 = self._offset
-                    address6 = self._read_Sep()
-                    if address6 is FAILURE:
-                        self._offset = index7
-                        address6 = self._read_EOS()
-                        if address6 is FAILURE:
-                            self._offset = index7
-                    if address6 is not FAILURE:
-                        elements2.append(address6)
-                    else:
-                        elements2 = None
-                        self._offset = index6
-                else:
-                    elements2 = None
-                    self._offset = index6
-                if elements2 is None:
-                    address0 = FAILURE
-                else:
-                    address0 = TreeNode5(self._input[index6:self._offset], index6, elements2)
-                    self._offset = self._offset
-                if address0 is FAILURE:
-                    self._offset = index1
-        self._cache['Options'][index0] = (address0, self._offset)
+        else:
+            elements0 = None
+            self._offset = index1
+        if elements0 is None:
+            address0 = FAILURE
+        else:
+            address0 = TreeNode4(self._input[index1:self._offset], index1, elements0)
+            self._offset = self._offset
+        self._cache['SortOpt'][index0] = (address0, self._offset)
+        return address0
+
+    def _read_PriceOpt(self):
+        address0, index0 = FAILURE, self._offset
+        cached = self._cache['PriceOpt'].get(index0)
+        if cached:
+            self._offset = cached[1]
+            return cached[0]
+        index1, elements0 = self._offset, []
+        address1 = FAILURE
+        address1 = self._read_PriceDb()
+        if address1 is not FAILURE:
+            elements0.append(address1)
+            address2 = FAILURE
+            index2 = self._offset
+            address2 = self._read_Sep()
+            if address2 is FAILURE:
+                self._offset = index2
+                address2 = self._read_EOS()
+                if address2 is FAILURE:
+                    self._offset = index2
+            if address2 is not FAILURE:
+                elements0.append(address2)
+            else:
+                elements0 = None
+                self._offset = index1
+        else:
+            elements0 = None
+            self._offset = index1
+        if elements0 is None:
+            address0 = FAILURE
+        else:
+            address0 = TreeNode5(self._input[index1:self._offset], index1, elements0)
+            self._offset = self._offset
+        self._cache['PriceOpt'][index0] = (address0, self._offset)
         return address0
 
     def _read_File(self):
