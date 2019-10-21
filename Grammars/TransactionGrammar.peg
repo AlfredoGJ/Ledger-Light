@@ -7,8 +7,8 @@ CompletePosting <- Account SepDouble Amount SepPlus? NL
 HalfPosting <- Account SepPlus? NL
 Account <- AccountID (":" AccountID)*
 #Account <- Account Sep Ammount
-Amount <- Commodity Quantity / Quantity Commodity / Quantity
-Commodity <- Text / "$"
+Amount <- Commodity Sep Quantity / Quantity Sep Commodity / Quantity
+Commodity <- ID / "$"
 Quantity <- "-"? Num+ ("." num+)?
 AccountID <- ([a-zA-Z]  /  " " [a-zA-Z] )+
 SepDouble <- Sep Sep
@@ -21,3 +21,4 @@ Day <- '0' [1-9] / [1-2] [0-9] / '3' [0-1]
 Date <- Year '-' Month ('-' Day)?
 Text <- [a-zA-Z] [a-zA-Z ]*
 Num <- [0-9]
+ID <- [a-zA-Z]*
