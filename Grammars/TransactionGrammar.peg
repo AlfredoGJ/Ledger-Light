@@ -1,0 +1,23 @@
+Grammar Transaction
+
+Transaction <- Date Sep Description? NL SepPlus CompletePosting SepPlus Posting+
+Description <- Text
+Posting <- CompletePosting / HalfPosting
+CompletePosting <- Account SepDouble Amount SepPlus? NL
+HalfPosting <- Account SepPlus? NL
+Account <- AccountID (":" AccountID)*
+#Account <- Account Sep Ammount
+Amount <- Commodity Quantity / Quantity Commodity / Quantity
+Commodity <- Text / "$"
+Quantity <- Num+ ("." num+)?
+AccountID <- ([a-zA-Z]  /  " " [a-zA-Z] )+
+SepDouble <- Sep Sep
+Sep <- (" " / "\t")    # General separator
+SepPlus <- Sep+
+NL <- "\n"
+Year <- [0-9] [0-9] [0-9] [0-9]
+Month <- '0' [1-9] / '1' [0-2]
+Day <- '0' [1-9] / [1-2] [0-9] / '3' [0-1]
+Date <- Year '-' Month ('-' Day)?
+Text <- [a-zA-Z] [a-zA-Z ]*
+Num <- [0-9]
