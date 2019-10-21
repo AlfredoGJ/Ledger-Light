@@ -1,6 +1,6 @@
 Grammar Transaction
-Transactions <- Transaction+
-Transaction <- Date Sep Description? NL SepPlus CompletePosting (SepPlus Posting)+
+
+Transaction <- Date Sep Description? NL #SepPlus CompletePosting (SepPlus Posting)+
 Description <- Text 
 Posting <- CompletePosting / HalfPosting
 CompletePosting <- Account SepDouble Amount SepPlus? NL

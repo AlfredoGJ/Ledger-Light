@@ -19,83 +19,74 @@ class TreeNode1(TreeNode):
         self.Date = elements[0]
         self.Sep = elements[1]
         self.NL = elements[3]
-        self.SepPlus = elements[4]
-        self.CompletePosting = elements[5]
 
 
 class TreeNode2(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode2, self).__init__(text, offset, elements)
-        self.SepPlus = elements[0]
-        self.Posting = elements[1]
-
-
-class TreeNode3(TreeNode):
-    def __init__(self, text, offset, elements):
-        super(TreeNode3, self).__init__(text, offset, elements)
         self.Account = elements[0]
         self.SepDouble = elements[1]
         self.Amount = elements[2]
         self.NL = elements[4]
 
 
+class TreeNode3(TreeNode):
+    def __init__(self, text, offset, elements):
+        super(TreeNode3, self).__init__(text, offset, elements)
+        self.Account = elements[0]
+        self.NL = elements[2]
+
+
 class TreeNode4(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode4, self).__init__(text, offset, elements)
-        self.Account = elements[0]
-        self.NL = elements[2]
+        self.AccountID = elements[0]
 
 
 class TreeNode5(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode5, self).__init__(text, offset, elements)
-        self.AccountID = elements[0]
+        self.AccountID = elements[1]
 
 
 class TreeNode6(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode6, self).__init__(text, offset, elements)
-        self.AccountID = elements[1]
-
-
-class TreeNode7(TreeNode):
-    def __init__(self, text, offset, elements):
-        super(TreeNode7, self).__init__(text, offset, elements)
         self.Commodity = elements[0]
         self.Sep = elements[1]
         self.Quantity = elements[2]
 
 
-class TreeNode8(TreeNode):
+class TreeNode7(TreeNode):
     def __init__(self, text, offset, elements):
-        super(TreeNode8, self).__init__(text, offset, elements)
+        super(TreeNode7, self).__init__(text, offset, elements)
         self.Quantity = elements[0]
         self.Sep = elements[1]
         self.Commodity = elements[2]
 
 
+class TreeNode8(TreeNode):
+    def __init__(self, text, offset, elements):
+        super(TreeNode8, self).__init__(text, offset, elements)
+        self.Sep = elements[1]
+
+
 class TreeNode9(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode9, self).__init__(text, offset, elements)
-        self.Sep = elements[1]
+        self.Num = elements[3]
 
 
 class TreeNode10(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode10, self).__init__(text, offset, elements)
-        self.Num = elements[3]
+        self.Year = elements[0]
+        self.Month = elements[2]
 
 
 class TreeNode11(TreeNode):
     def __init__(self, text, offset, elements):
         super(TreeNode11, self).__init__(text, offset, elements)
-        self.Year = elements[0]
-        self.Month = elements[2]
-
-
-class TreeNode12(TreeNode):
-    def __init__(self, text, offset, elements):
-        super(TreeNode12, self).__init__(text, offset, elements)
         self.Day = elements[1]
 
 
@@ -119,26 +110,6 @@ class Grammar(object):
     REGEX_10 = re.compile('^[a-zA-Z ]')
     REGEX_11 = re.compile('^[0-9]')
     REGEX_12 = re.compile('^[a-zA-Z]')
-
-    def _read_Transactions(self):
-        address0, index0 = FAILURE, self._offset
-        cached = self._cache['Transactions'].get(index0)
-        if cached:
-            self._offset = cached[1]
-            return cached[0]
-        remaining0, index1, elements0, address1 = 1, self._offset, [], True
-        while address1 is not FAILURE:
-            address1 = self._read_Transaction()
-            if address1 is not FAILURE:
-                elements0.append(address1)
-                remaining0 -= 1
-        if remaining0 <= 0:
-            address0 = TreeNode(self._input[index1:self._offset], index1, elements0)
-            self._offset = self._offset
-        else:
-            address0 = FAILURE
-        self._cache['Transactions'][index0] = (address0, self._offset)
-        return address0
 
     def _read_Transaction(self):
         address0, index0 = FAILURE, self._offset
@@ -167,56 +138,6 @@ class Grammar(object):
                     address4 = self._read_NL()
                     if address4 is not FAILURE:
                         elements0.append(address4)
-                        address5 = FAILURE
-                        address5 = self._read_SepPlus()
-                        if address5 is not FAILURE:
-                            elements0.append(address5)
-                            address6 = FAILURE
-                            address6 = self._read_CompletePosting()
-                            if address6 is not FAILURE:
-                                elements0.append(address6)
-                                address7 = FAILURE
-                                remaining0, index3, elements1, address8 = 1, self._offset, [], True
-                                while address8 is not FAILURE:
-                                    index4, elements2 = self._offset, []
-                                    address9 = FAILURE
-                                    address9 = self._read_SepPlus()
-                                    if address9 is not FAILURE:
-                                        elements2.append(address9)
-                                        address10 = FAILURE
-                                        address10 = self._read_Posting()
-                                        if address10 is not FAILURE:
-                                            elements2.append(address10)
-                                        else:
-                                            elements2 = None
-                                            self._offset = index4
-                                    else:
-                                        elements2 = None
-                                        self._offset = index4
-                                    if elements2 is None:
-                                        address8 = FAILURE
-                                    else:
-                                        address8 = TreeNode2(self._input[index4:self._offset], index4, elements2)
-                                        self._offset = self._offset
-                                    if address8 is not FAILURE:
-                                        elements1.append(address8)
-                                        remaining0 -= 1
-                                if remaining0 <= 0:
-                                    address7 = TreeNode(self._input[index3:self._offset], index3, elements1)
-                                    self._offset = self._offset
-                                else:
-                                    address7 = FAILURE
-                                if address7 is not FAILURE:
-                                    elements0.append(address7)
-                                else:
-                                    elements0 = None
-                                    self._offset = index1
-                            else:
-                                elements0 = None
-                                self._offset = index1
-                        else:
-                            elements0 = None
-                            self._offset = index1
                     else:
                         elements0 = None
                         self._offset = index1
@@ -312,7 +233,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode3(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode2(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['CompletePosting'][index0] = (address0, self._offset)
         return address0
@@ -352,7 +273,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode4(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode3(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['HalfPosting'][index0] = (address0, self._offset)
         return address0
@@ -401,7 +322,7 @@ class Grammar(object):
                 if elements2 is None:
                     address3 = FAILURE
                 else:
-                    address3 = TreeNode6(self._input[index3:self._offset], index3, elements2)
+                    address3 = TreeNode5(self._input[index3:self._offset], index3, elements2)
                     self._offset = self._offset
                 if address3 is not FAILURE:
                     elements1.append(address3)
@@ -422,7 +343,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode5(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode4(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['Account'][index0] = (address0, self._offset)
         return address0
@@ -459,7 +380,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode7(self._input[index2:self._offset], index2, elements0)
+            address0 = TreeNode6(self._input[index2:self._offset], index2, elements0)
             self._offset = self._offset
         if address0 is FAILURE:
             self._offset = index1
@@ -488,7 +409,7 @@ class Grammar(object):
             if elements1 is None:
                 address0 = FAILURE
             else:
-                address0 = TreeNode8(self._input[index3:self._offset], index3, elements1)
+                address0 = TreeNode7(self._input[index3:self._offset], index3, elements1)
                 self._offset = self._offset
             if address0 is FAILURE:
                 self._offset = index1
@@ -738,7 +659,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode9(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode8(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['SepDouble'][index0] = (address0, self._offset)
         return address0
@@ -863,7 +784,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode10(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode9(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['Year'][index0] = (address0, self._offset)
         return address0
@@ -1181,7 +1102,7 @@ class Grammar(object):
                     if elements1 is None:
                         address4 = FAILURE
                     else:
-                        address4 = TreeNode12(self._input[index3:self._offset], index3, elements1)
+                        address4 = TreeNode11(self._input[index3:self._offset], index3, elements1)
                         self._offset = self._offset
                     if address4 is FAILURE:
                         address4 = TreeNode(self._input[index2:index2], index2)
@@ -1203,7 +1124,7 @@ class Grammar(object):
         if elements0 is None:
             address0 = FAILURE
         else:
-            address0 = TreeNode11(self._input[index1:self._offset], index1, elements0)
+            address0 = TreeNode10(self._input[index1:self._offset], index1, elements0)
             self._offset = self._offset
         self._cache['Date'][index0] = (address0, self._offset)
         return address0
@@ -1338,7 +1259,7 @@ class Parser(Grammar):
         self._expected = []
 
     def parse(self):
-        tree = self._read_Transactions()
+        tree = self._read_Transaction()
         if tree is not FAILURE and self._offset == self._input_size:
             return tree
         if not self._expected:
