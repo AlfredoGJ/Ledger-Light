@@ -22,6 +22,16 @@ def parse_index(indexPath):
             raise Exception("While parsing file {} \n file to include was not found '{}'".format(indexPath, filePath))
     return filePaths
 
+def read_files(filePaths):
+    all_transactions=[]
+    for path in filePaths:
+        file_content = ''.join(open(path,'r'))
+        tree = ledgerParser.parse(file_content)
+        all_transactions = all_transactions + fetch_transactions(tree) 
+    return all_transactions
+
+
+
 def fetch_transactions(tree):
     transactions=[]
     for node in tree:
